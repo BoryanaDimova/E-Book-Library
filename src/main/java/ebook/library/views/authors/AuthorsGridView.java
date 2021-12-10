@@ -21,6 +21,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -84,6 +86,7 @@ public class AuthorsGridView extends VerticalLayout {
 		    delete.setIcon(VaadinIcon.TRASH.create());
 		    delete.addClickListener(e -> {
 		    	remove(author);
+		    	Notification.show("Author deleted!").addThemeVariants(NotificationVariant.LUMO_CONTRAST);
 		    });
 		    return delete;
 		}).setWidth("100px").setFlexGrow(0);
@@ -160,7 +163,8 @@ public class AuthorsGridView extends VerticalLayout {
 			boolean beanIsValid = editor.getBinder().writeBeanIfValid(author);
 			System.out.println("beanIsValid: " + beanIsValid);
 			if (beanIsValid) {
-				authorService.update(author);				
+				authorService.update(author);	
+				Notification.show("Successfully saved author!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 				editor.closeEditor();
 				resetGrid();
 			}

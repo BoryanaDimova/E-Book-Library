@@ -1,7 +1,12 @@
 package ebook.library.views.access;
 
 import com.vaadin.flow.router.Route;
+
+import ebook.library.data.service.UserService;
+
 import com.vaadin.flow.router.PageTitle;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -17,7 +22,7 @@ public class LoginView extends VerticalLayout {
 	private LoginForm loginForm = new LoginForm();
 	private RegistrationForm registrationForm;
 
-	public LoginView() {
+	public LoginView(@Autowired UserService userService) {
 		addClassName("login-rich-content");
 		// Align form at the center
 		setSizeFull();
@@ -27,7 +32,7 @@ public class LoginView extends VerticalLayout {
 		loginForm.getElement().getThemeList().add("light");
 		loginForm.setAction("login");
 		loginForm.getElement().setAttribute("no-autofocus", "");
-		registrationForm = new RegistrationForm();
+		registrationForm = new RegistrationForm(userService, loginForm);
 		setHorizontalComponentAlignment(Alignment.CENTER, registrationForm);
 		registrationForm.getElement().getThemeList().add("light");
 		registrationForm.getElement().setAttribute("no-autofocus", "");
