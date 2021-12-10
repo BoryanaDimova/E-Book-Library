@@ -130,8 +130,6 @@ public class MainLayout extends AppLayout {
 
 				new MenuItemInfo("Books", "la la-list", BooksListView.class), //
 
-//                new MenuItemInfo("Favourites", "la la-file", EmptyView.class), //
-//
 				new MenuItemInfo("Authors", "la la-columns", AuthorsGridView.class), //
 
 				new MenuItemInfo("Users", "la la-user", UsersGrid.class), //

@@ -2,13 +2,13 @@ package ebook.library.views.access;
 
 import java.util.stream.Stream;
 
+
 import com.vaadin.flow.component.HasValueAndElement;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Span;
-import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
@@ -37,7 +37,7 @@ public class RegistrationForm extends FormLayout {
 
 	public RegistrationForm() {
 		addClassName("vaadin-login-form");
-		
+
 		title = new H3("Sign Up");
 		firstName = new TextField("First Name");
 		lastName = new TextField("Last Lame");
@@ -53,7 +53,21 @@ public class RegistrationForm extends FormLayout {
 
 		submitButton = new Button("Sign Up");
 		submitButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-		binder.bindInstanceFields(this);
+		
+		binder.bind(username, UserEntity::getUsername, UserEntity::setUsername);
+//		binder.bind(password, UserEntity::getPassword, (u, v) -> u.setPassword(passwordEncoder.encode(v)));
+//		binder.bind(email, UserEntity::getEmail, UserEntity::setEmail);
+//		binder.forField(password).withValidator(this::passwordValidator).bind("password");
+
+//		passwordConfirm.addValueChangeListener(e -> {
+//			enablePasswordValidation = true;
+//
+//			binder.validate();
+//		});
+
+		// Set the label where bean-level error messages go
+//		binder.setStatusLabel(registrationForm.getErrorMessageField());
+
 		add(title, firstName, lastName, email, username, password, passwordConfirm, errorMessageField, submitButton);
 
 		// Max width of the Form

@@ -38,7 +38,7 @@ public class BookForm extends FormLayout {
 	public BooksListView listView;
 	
 	
-	public BookForm(@Autowired BookService bookService, AuthorService authorService, BooksListView listView) {
+	public BookForm(@Autowired BookService bookService, @Autowired AuthorService authorService, BooksListView listView) {
 		this.bookService = bookService;
 		this.authorService = authorService;
 		this.listView = listView;

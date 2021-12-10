@@ -61,7 +61,6 @@ public class BookCard extends LitTemplate {
         this.header.setText(book.getTitle());
         this.subtitle.setText(book.getAuthorName());
         this.text.setText(book.getDescription());
-//        this.badge.setText("Label");
        
         this.header.getElement().addEventListener("click",l ->{
         	bookForm.openModalForm(book);

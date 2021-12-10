@@ -3,12 +3,16 @@ package ebook.library.views.users;
 import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.security.RolesAllowed;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.util.ObjectUtils;
 
+import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -21,6 +25,7 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.listbox.MultiSelectListBox;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -29,20 +34,27 @@ import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.provider.ListDataProvider;
+import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import ebook.library.data.entity.AuthorEntity;
+import ebook.library.data.entity.RoleEntity;
 import ebook.library.data.entity.UserEntity;
+import ebook.library.data.service.RoleService;
 import ebook.library.data.service.UserService;
 import ebook.library.views.MainLayout;
 
-@RolesAllowed("ADMIN")
+@RolesAllowed("ROLE_ADMIN")
 @PageTitle("Users")
 @Route(value = "users", layout = MainLayout.class)
 public class UsersGrid extends Div {
 	private static final long serialVersionUID = 1L;
 	private UserService userService;
+	private RoleService roleService;
+	private PasswordEncoder passwordEncoder;
+	
 	private Collection<UserEntity> users;
 	private Grid<UserEntity> grid;
 	private ListDataProvider<UserEntity> dataProvider;
@@ -52,8 +64,10 @@ public class UsersGrid extends Div {
 
 	private boolean sidebarCollapsed = true;
 
-	public UsersGrid(@Autowired final UserService userService) {
+	public UsersGrid(@Autowired final UserService userService,  @Autowired PasswordEncoder passwordEncoder, @Autowired RoleService roleService) {
 		this.userService = userService;
+		this.roleService = roleService;
+		this.passwordEncoder = passwordEncoder;
 		init();
 	}
 
@@ -208,14 +222,21 @@ public class UsersGrid extends Div {
 		TextField username = new TextField();
 		PasswordField password = new PasswordField();
 		EmailField email = new EmailField();
-
+		MultiSelectListBox<RoleEntity> listBox = new MultiSelectListBox<>();
+		listBox.setItems(roleService.findAll());
+		listBox.setRenderer(new ComponentRenderer<>(role ->
+		new Text(role.getCode())));
+		
+		
 		binder = new BeanValidationBinder<>(UserEntity.class);
 
 		binder.bind(firstName, UserEntity::getFirstName, UserEntity::setFirstName);
 		binder.bind(lastName, UserEntity::getLastName, UserEntity::setLastName);
 		binder.bind(username, UserEntity::getUsername, UserEntity::setUsername);
-		binder.bind(password, UserEntity::getPassword, UserEntity::setPassword);
+		binder.bind(password, UserEntity::getPassword, (u, v) -> u.setPassword(passwordEncoder.encode(v)));
 		binder.bind(email, UserEntity::getEmail, UserEntity::setEmail);
+		binder.bind(listBox, UserEntity::getRoles, UserEntity::setRoles);
+
 		binder.readBean(newUser);
 
 		Header header = new Header();
@@ -248,6 +269,7 @@ public class UsersGrid extends Div {
 		formLayout.addFormItem(email, "Email");
 		formLayout.addFormItem(username, "Username");
 		formLayout.addFormItem(password, "Password");
+		formLayout.addFormItem(listBox, "Roles");
 
 		vLayout.removeAll();
 		vLayout.add(header, formLayout, dialogButtons);

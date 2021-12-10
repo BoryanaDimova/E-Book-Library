@@ -2,6 +2,7 @@ package ebook.library.views.access;
 
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.PageTitle;
+
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Header;
@@ -14,7 +15,7 @@ public class LoginView extends VerticalLayout {
 
 	private Header h = new Header();
 	private LoginForm loginForm = new LoginForm();
-	private RegistrationForm registrationForm = new RegistrationForm();
+	private RegistrationForm registrationForm;
 
 	public LoginView() {
 		addClassName("login-rich-content");
@@ -26,7 +27,7 @@ public class LoginView extends VerticalLayout {
 		loginForm.getElement().getThemeList().add("light");
 		loginForm.setAction("login");
 		loginForm.getElement().setAttribute("no-autofocus", "");
-
+		registrationForm = new RegistrationForm();
 		setHorizontalComponentAlignment(Alignment.CENTER, registrationForm);
 		registrationForm.getElement().getThemeList().add("light");
 		registrationForm.getElement().setAttribute("no-autofocus", "");

@@ -38,7 +38,7 @@ import ebook.library.data.entity.UserEntity;
 import ebook.library.data.service.AuthorService;
 import ebook.library.views.MainLayout;
 
-@RolesAllowed("ADMIN")
+@RolesAllowed("ROLE_ADMIN")
 @PageTitle("Authors")
 @Route(value = "authors", layout = MainLayout.class)
 public class AuthorsGridView extends VerticalLayout {

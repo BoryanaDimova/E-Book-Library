@@ -52,8 +52,9 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 	
 	@Id
 	private Button addBookBtn;
-
-	public BooksListView(@Autowired BookService bookService, AuthorService authorService,
+	
+	@Autowired
+	public BooksListView(BookService bookService,AuthorService authorService,
 			AuthenticatedUser authenticatedUser, UserService userService) {
 		addClassNames("image-list-view", "flex", "flex-col", "h-full");
 
