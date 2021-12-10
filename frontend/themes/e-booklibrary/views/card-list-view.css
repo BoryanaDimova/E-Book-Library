@@ -72,6 +72,7 @@
 }
 
 .v-button-link {
+	margin-left: auto;
 	border-radius: 40%;
 	padding: 0px;
 	border: none;

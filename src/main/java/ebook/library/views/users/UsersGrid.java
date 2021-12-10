@@ -227,7 +227,6 @@ public class UsersGrid extends Div {
 		listBox.setRenderer(new ComponentRenderer<>(role ->
 		new Text(role.getCode())));
 		
-		
 		binder = new BeanValidationBinder<>(UserEntity.class);
 
 		binder.bind(firstName, UserEntity::getFirstName, UserEntity::setFirstName);

@@ -2,7 +2,7 @@ package ebook.library.views.bookslist;
 
 import javax.annotation.security.RolesAllowed;
 
-import org.springframework.beans.factory.annotation.Autowired;
+
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
@@ -67,7 +67,7 @@ public class BookCard extends LitTemplate {
         });
         
         this.delete.setIcon(VaadinIcon.CLOSE.create());
-        this.delete.setVisible(isAdmin());
+        this.delete.setVisible(true);
         this.delete.getElement().addEventListener("click", l-> {
         	bookForm.remove(book);
         });
@@ -91,11 +91,4 @@ public class BookCard extends LitTemplate {
     private void toggleFavIcon(Boolean isAddedToFavs){
     	 this.favouriteBtn.setIcon(isAddedToFavs ? heartIcon : heartOIcon);
     }
-    
-    @RolesAllowed("ROLE_ADMIN")
-    public boolean isAdmin() {
-        return true;
-    }
-    
-    
 }

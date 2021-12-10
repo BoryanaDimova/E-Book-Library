@@ -2,6 +2,8 @@ package ebook.library.security;
 
 import java.util.Optional;
 
+import javax.annotation.security.RolesAllowed;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -29,6 +31,11 @@ public class AuthenticatedUser {
                 .filter(authentication -> !(authentication instanceof AnonymousAuthenticationToken));
     }
 
+    @RolesAllowed("ROLE_ADMIN")
+    public boolean isAdmin() {
+        return true;
+    }
+    
     public Optional<UserEntity> get() {
         return getAuthentication().map(authentication -> userRepository.findByUsername(authentication.getName()));
     }

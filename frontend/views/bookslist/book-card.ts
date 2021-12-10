@@ -13,6 +13,7 @@ export class BookCard extends LitElement {
 
 	render() {
 		return html`<li class="bg-contrast-5 flex flex-col items-start p-m rounded-l" style="hegith:40rem; width:20rem">
+	<vaadin-button id="delete" class="v-button-link"></vaadin-button>
 	<div class="bg-contrast flex items-center justify-center mb-m overflow-hidden rounded-m w-full"
 		style="height: 430px;">
 		<img id="image" class="w-full" />
@@ -24,13 +25,8 @@ export class BookCard extends LitElement {
 		</vaadin-vertical-layout>
 		<vaadin-button id="favouriteBtn" class="v-button-link"></vaadin-button>
 	</vaadin-horizontal-layout>
-
 	<p class="my-m" id="text" style="height:160px;overflow:hidden;text-overflow:ellipsis"></p>
-	<vaadin-horizontal-layout class="justify-between w-full">
-		<div id="badge"></div>
-				<vaadin-button id="delete" class="v-button-link"></vaadin-button>
-	</vaadin-horizontal-layout>
-	
+	<div id="badge"></div>
 </li>`;
 	}
 }
