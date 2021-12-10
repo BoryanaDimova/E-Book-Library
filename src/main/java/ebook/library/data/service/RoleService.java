@@ -29,4 +29,8 @@ public class RoleService extends CrudService<RoleEntity, Integer> {
 	public Collection<RoleEntity> findAll() {
 		return roleRepository.findAll();
 	}
+	
+	public RoleEntity getRoleByCode(String roleCode) {
+		return roleRepository.findByCode(roleCode);
+	}
 }

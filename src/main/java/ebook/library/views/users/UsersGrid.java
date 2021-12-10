@@ -26,6 +26,8 @@ import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.html.Header;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.listbox.MultiSelectListBox;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.splitlayout.SplitLayout;
@@ -35,6 +37,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.provider.ListDataProvider;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.validator.EmailValidator;
 import com.vaadin.flow.function.SerializablePredicate;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
@@ -184,6 +187,7 @@ public class UsersGrid extends Div {
 		body.setText("Are you sure you want to delete " + user.getFirstName() + " " + user.getLastName() + "?");
 		Button confirm = new Button("Confirm", l1 -> {
 			userService.delete(user.getId());
+			Notification.show("User Deleted!").addThemeVariants(NotificationVariant.LUMO_CONTRAST);
 			resetGrid();
 			dialog.close();
 		});
@@ -233,7 +237,8 @@ public class UsersGrid extends Div {
 		binder.bind(lastName, UserEntity::getLastName, UserEntity::setLastName);
 		binder.bind(username, UserEntity::getUsername, UserEntity::setUsername);
 		binder.bind(password, UserEntity::getPassword, (u, v) -> u.setPassword(passwordEncoder.encode(v)));
-		binder.bind(email, UserEntity::getEmail, UserEntity::setEmail);
+		binder.forField(email).withValidator(new EmailValidator("Invalid email."))
+		.bind(UserEntity::getEmail, UserEntity::setEmail);
 		binder.bind(listBox, UserEntity::getRoles, UserEntity::setRoles);
 
 		binder.readBean(newUser);
@@ -246,6 +251,7 @@ public class UsersGrid extends Div {
 			boolean beanIsValid = binder.writeBeanIfValid(newUser);
 			if (beanIsValid) {
 				userService.update(newUser);
+				Notification.show("Successfully saved user!").addThemeVariants(NotificationVariant.LUMO_SUCCESS);
 				resetGrid();
 				if (!sidebarCollapsed) {
 					vLayout.setVisible(false);
