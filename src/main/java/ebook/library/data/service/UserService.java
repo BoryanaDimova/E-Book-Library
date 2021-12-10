@@ -31,6 +31,4 @@ public class UserService extends CrudService<UserEntity, Integer> {
 	public void saveAll(List<UserEntity> users) {
 		userRepository.saveAll(users);
 	}
-
-	
 }

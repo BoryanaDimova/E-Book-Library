@@ -132,6 +132,11 @@
             <artifactId>vaadin-testbench</artifactId>
             <scope>test</scope>
         </dependency>
+       <dependency>
+		    <groupId>de.jfancy</groupId>
+		    <artifactId>star-rating</artifactId>
+		    <version>1.0.1</version>
+		</dependency>
         <!-- Include JUnit 4 support for TestBench and others -->
         <dependency>
             <groupId>org.junit.vintage</groupId>

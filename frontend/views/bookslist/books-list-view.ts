@@ -19,7 +19,7 @@ export class BooksListView extends LitElement {
         <vaadin-horizontal-layout class="items-center justify-between">
           <vaadin-vertical-layout class="m-2" style="margin-right:10px">
             <h2 class="mb-0 mt-xl text-3xl mr-2">Books Library</h2>
-            <p class="mb-xl mt-0 text-secondary"></p>
+           <vaadin-select label="Filter" id="filter"></vaadin-select>
           </vaadin-vertical-layout>
           <vaadin-button id="addBookBtn">Add Book</vaadin-button>
         </vaadin-horizontal-layout>

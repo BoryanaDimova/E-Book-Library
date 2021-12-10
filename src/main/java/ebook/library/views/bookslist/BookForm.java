@@ -9,14 +9,14 @@ import java.util.stream.IntStream;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.vaadin.flow.component.ComponentEventListener;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.combobox.ComboBox.ItemFilter;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
+import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Header;
+import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.orderedlayout.FlexComponent.Alignment;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -24,8 +24,6 @@ import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.value.ValueChangeMode;
-import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.function.SerializablePredicate;
 
 import ebook.library.data.entity.AuthorEntity;
 import ebook.library.data.entity.BookEntity;
@@ -37,10 +35,13 @@ public class BookForm extends FormLayout {
 	private BookService bookService;
 	private BeanValidationBinder<BookEntity> binder = new BeanValidationBinder<>(BookEntity.class);
 	private Dialog dialog;
-
-	public BookForm(@Autowired BookService bookService, AuthorService authorService) {
+	public BooksListView listView;
+	
+	
+	public BookForm(@Autowired BookService bookService, AuthorService authorService, BooksListView listView) {
 		this.bookService = bookService;
 		this.authorService = authorService;
+		this.listView = listView;
 	}
 
 	public void openModalForm(BookEntity bookEntity) {
@@ -51,6 +52,26 @@ public class BookForm extends FormLayout {
 		dialog.open();
 	}
 
+	public void remove(BookEntity bookEntity) {
+		Dialog dialog = new Dialog();
+
+		H3 title = new H3("Deletion Confirmation");
+
+		Div body = new Div();
+		body.setText("Are you sure you want to delete " + bookEntity.getTitle() + "?");
+		Button confirm = new Button("Confirm", l1 -> {
+			bookService.delete(bookEntity.getId());
+//			fireEvent(new BookEvent(this, false));
+			this.listView.resetGrid();
+			dialog.close();
+		});
+		Button cancel = new Button("Cancel", l1 -> dialog.close());
+		HorizontalLayout dialogButtons = new HorizontalLayout(confirm, cancel);
+		VerticalLayout dialogBody = new VerticalLayout(title, body, dialogButtons);
+		dialog.add(dialogBody);
+		dialog.open();
+	}
+	
 	private VerticalLayout getForm(BookEntity book) {
 		VerticalLayout headerContent = generateHeader(book);	
 		HorizontalLayout dialogButtons = generateFooter(book);
@@ -71,8 +92,9 @@ public class BookForm extends FormLayout {
 			boolean beanIsValid = binder.writeBeanIfValid(book);
 			if (beanIsValid) {
 				bookService.update(book);
-				dialog.close();
 				fireEvent(new BookEvent(this, false));
+				this.listView.resetGrid();
+				dialog.close();
 			}
 		});
 		save.getElement().getStyle().set("margin-left", "auto");

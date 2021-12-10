@@ -41,7 +41,7 @@ public class UserEntity extends AbstractEntity {
 	@NotNull(message = "Field is required!")
 	private String email;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
       @JoinTable(name = "users_books",
             joinColumns = {
                     @JoinColumn(name = "user_id", referencedColumnName = "id",
