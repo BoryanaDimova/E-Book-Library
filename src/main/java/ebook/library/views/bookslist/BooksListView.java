@@ -1,7 +1,6 @@
 package ebook.library.views.bookslist;
 
 import java.util.Collection;
-
 import javax.annotation.security.PermitAll;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,6 @@ import com.vaadin.flow.component.HasStyle;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.JsModule;
-import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.littemplate.LitTemplate;
 import com.vaadin.flow.component.select.Select;
 import com.vaadin.flow.component.template.Id;
@@ -20,6 +18,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import ebook.library.data.entity.BookEntity;
+import ebook.library.data.entity.RatingEntity;
 import ebook.library.data.entity.UserEntity;
 import ebook.library.data.service.AuthorService;
 import ebook.library.data.service.BookService;
@@ -41,9 +40,11 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 	private UserEntity loggedUser;
 	private BookService bookService;
 	private UserService userService;
+	private AuthenticatedUser authenticatedUser;
 
 	private ListDataProvider<BookEntity> dataProvider;
 	private Collection<BookEntity> userFavouriteBooks;
+	private Collection<RatingEntity> ratings;
 	private Collection<BookEntity> books;
 	private BookForm bookForm;
 
@@ -54,16 +55,15 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 	private Button addBookBtn;
 	
 	@Autowired
-	public BooksListView(BookService bookService,AuthorService authorService,
+	public BooksListView(BookService bookService, AuthorService authorService,
 			AuthenticatedUser authenticatedUser, UserService userService) {
 		addClassNames("image-list-view", "flex", "flex-col", "h-full");
 
-		this.loggedUser = authenticatedUser.get().orElse(new UserEntity());
+		this.authenticatedUser = authenticatedUser;
+		setLoggedUser();
 		this.bookService = bookService;
 		this.userService = userService;
 
-		
-		
 		bookForm = new BookForm(bookService, authorService, this);
 		init();
 	}
@@ -71,6 +71,7 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 	private void init() {
 		books = bookService.findAll();
 		userFavouriteBooks = loggedUser.getFavouriteBooks();
+		ratings = loggedUser.getRatings();
 		dataProvider = new ListDataProvider<BookEntity>(books);
 
 		addBookBtn.addClickListener(l -> openModalForm(new BookEntity()));
@@ -92,7 +93,13 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 
 	private void generateCards() {
 		dataProvider.getItems().forEach(book -> {
-			add(new BookCard(book, bookForm, userFavouriteBooks.contains(book)));
+			BookCard bookCard = new BookCard(book, bookForm, userFavouriteBooks.contains(book));
+			RatingEntity rating = ratings.stream().filter(r->r.getBook().getId().equals(book.getId())).findFirst().get();
+			if(rating != null) {
+				bookCard.setRating(rating.getRating());
+			}
+			bookCard.setAvgRating(book.getRatings());
+			add(bookCard);
 		});
 	}
 
@@ -100,14 +107,19 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 		bookForm.openModalForm(bookEntity);
 	}
 
+	private void setLoggedUser() {
+		this.loggedUser = authenticatedUser.get().orElse(new UserEntity());
+	}
+	
 	public void resetGrid() {
+		setLoggedUser();
 		getElement().removeAllChildren();
 		books.clear();
 		books.addAll(bookService.findAll());
-//		userFavouriteBooks.clear();
-//		userFavouriteBooks.addAll(loggedUser.getFavouriteBooks());
+		userFavouriteBooks.clear();
+		userFavouriteBooks.addAll(loggedUser.getFavouriteBooks());
 		dataProvider.refreshAll();
-		generateCards();
+//		generateCards();
 	}
 
 	public void addBookToFavourites(BookEntity book) {
@@ -126,5 +138,15 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 			userService.update(this.loggedUser);
 			resetGrid();
 		}
+	}
+
+	public void addRating(BookEntity book, int rating) {
+		RatingEntity ratingEntity = new RatingEntity();
+		ratingEntity.setUser(loggedUser);
+		ratingEntity.setRating(rating);
+		
+		book.getRatings().add(ratingEntity);
+		bookService.update(book);
+		resetGrid();
 	}
 }

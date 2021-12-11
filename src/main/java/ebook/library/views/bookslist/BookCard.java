@@ -1,8 +1,6 @@
 package ebook.library.views.bookslist;
 
-import javax.annotation.security.RolesAllowed;
-
-
+import java.util.List;
 
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
@@ -13,12 +11,11 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.littemplate.LitTemplate;
 import com.vaadin.flow.component.template.Id;
 
-import de.jfancy.StarsRating;
 import ebook.library.data.entity.BookEntity;
+import ebook.library.data.entity.RatingEntity;
 
 @JsModule("./views/bookslist/book-card.ts")
 @Tag("book-card")
@@ -30,7 +27,7 @@ public class BookCard extends LitTemplate {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-
+	
 	@Id
     private Image image;
 
@@ -42,16 +39,19 @@ public class BookCard extends LitTemplate {
 
     @Id
     private Paragraph text;
+    
+    @Id private Span badge;
 
     @Id
-    private Div badge;
+    private StarsRating starsRating;
     
     @Id
     private Button delete;
     
     @Id
     private Button favouriteBtn;
- 
+    
+    private Integer rating = 0;
     
     public BookCard(BookEntity book, BookForm bookForm, Boolean isAddedToFavs) {
     	addClassNames("image-card w-30");
@@ -80,15 +80,37 @@ public class BookCard extends LitTemplate {
         	} else {
         		bookForm.listView.addBookToFavourites(book);
         	}
+        });   
+        
+        starsRating.setNumstars(6);
+        starsRating.setManual(true);
+        starsRating.addValueChangeListener(event ->{
+        	bookForm.listView.addRating(book, event.getValue());
         });
-        
-        
-        StarsRating starsRating = new StarsRating(0,6, true);
-        badge.add(starsRating);
     }
     
+    public void setRating(int rating) {
+    	 starsRating.setRating(rating);
+    }
+    
+    public void setAvgRating(List<RatingEntity> bookRatings) {
+    	this.setAvgRating(calculateBookRating(bookRatings));
+    }
+    
+    
+    public void setAvgRating(double rating) {
+    	badge.setText(String.valueOf(rating));
+    }
     
     private void toggleFavIcon(Boolean isAddedToFavs){
     	 this.favouriteBtn.setIcon(isAddedToFavs ? heartIcon : heartOIcon);
     }
+    
+    private double calculateBookRating(List<RatingEntity> bookRatings) {
+		bookRatings.forEach(r ->{ 
+			rating += r.getRating();
+			});
+		return (rating/bookRatings.size());
+	}
+    
 }

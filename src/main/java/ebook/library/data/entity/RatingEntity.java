@@ -29,4 +29,30 @@ public class RatingEntity extends AbstractEntity {
 	@Min(1)
     @Max(6)
 	private int rating;
+
+	public BookEntity getBook() {
+		return book;
+	}
+
+	public void setBook(BookEntity book) {
+		this.book = book;
+	}
+
+	public UserEntity getUser() {
+		return user;
+	}
+
+	public void setUser(UserEntity user) {
+		this.user = user;
+	}
+
+	public int getRating() {
+		return rating;
+	}
+
+	public void setRating(int rating) {
+		this.rating = rating;
+	}
+	
+	
 }

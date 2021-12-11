@@ -1,6 +1,7 @@
 package ebook.library.data.entity;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,6 +11,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
@@ -55,6 +57,8 @@ public class UserEntity extends AbstractEntity {
 	@JoinTable(name = "account_role", joinColumns = @JoinColumn(name = "account_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
 	private Set<RoleEntity> roles;
     
+	@OneToMany(mappedBy = "user", fetch = FetchType.EAGER)
+	private List<RatingEntity> ratings;
     
 	public UserEntity() {
 	}
@@ -122,5 +126,17 @@ public class UserEntity extends AbstractEntity {
 
 	public void setRoles(Set<RoleEntity> roles) {
 		this.roles = roles;
+	}
+
+
+	public List<RatingEntity> getRatings() {
+		return ratings;
+	}
+
+
+	public void setRatings(List<RatingEntity> ratings) {
+		this.ratings = ratings;
 	}	
+	
+	
 }

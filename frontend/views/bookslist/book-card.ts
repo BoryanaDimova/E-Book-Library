@@ -26,7 +26,10 @@ export class BookCard extends LitElement {
 		<vaadin-button id="favouriteBtn" class="v-button-link"></vaadin-button>
 	</vaadin-horizontal-layout>
 	<p class="my-m" id="text" style="height:160px;overflow:hidden;text-overflow:ellipsis"></p>
-	<div id="badge"></div>
+	<vaadin-horizontal-layout class="justify-between w-full">
+		<span class="badge" id="badge"></span>
+		<stars-rating id="starsRating"></stars-rating>
+	</vaadin-horizontal-layout>
 </li>`;
 	}
 }
