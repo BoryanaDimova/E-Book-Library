@@ -54,9 +54,8 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 	@Id
 	private Button addBookBtn;
 	
-	@Autowired
-	public BooksListView(BookService bookService, AuthorService authorService,
-			AuthenticatedUser authenticatedUser, UserService userService) {
+	public BooksListView(@Autowired BookService bookService, @Autowired AuthorService authorService,
+			@Autowired AuthenticatedUser authenticatedUser,@Autowired UserService userService) {
 		addClassNames("image-list-view", "flex", "flex-col", "h-full");
 
 		this.authenticatedUser = authenticatedUser;
@@ -112,14 +111,14 @@ public class BooksListView extends LitTemplate implements HasComponents, HasStyl
 	}
 	
 	public void resetGrid() {
-		setLoggedUser();
+//		setLoggedUser();
 		getElement().removeAllChildren();
 		books.clear();
 		books.addAll(bookService.findAll());
-		userFavouriteBooks.clear();
-		userFavouriteBooks.addAll(loggedUser.getFavouriteBooks());
+//		userFavouriteBooks.clear();
+//		userFavouriteBooks.addAll(loggedUser.getFavouriteBooks());
 		dataProvider.refreshAll();
-//		generateCards();
+		generateCards();
 	}
 
 	public void addBookToFavourites(BookEntity book) {
